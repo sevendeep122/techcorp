@@ -45,6 +45,15 @@
         transition: background .4s var(--ease), color .4s var(--ease);
         -webkit-font-smoothing: antialiased;
     }
+    body::before {
+        content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+        background:
+            radial-gradient(44% 38% at 86% 4%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 62%),
+            radial-gradient(38% 34% at 4% 42%, color-mix(in srgb, var(--accent-2) 9%, transparent), transparent 60%),
+            radial-gradient(52% 44% at 62% 112%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 62%);
+        transition: opacity .4s;
+    }
+    :root[data-theme="light"] body::before { opacity: .55; }
     ::selection { background: var(--accent); color: #fff; }
     h1,h2,h3,h4 { font-family: 'Space Grotesk', 'Inter', sans-serif; letter-spacing: -.3px; }
     .num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
@@ -136,7 +145,13 @@
         border-radius: var(--radius); padding: 20px; position: relative; overflow: hidden;
         transition: transform .4s var(--ease), border-color .3s;
     }
-    .stat:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--accent) 32%, var(--line)); }
+    .stat::before {
+        content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        opacity: .45; transition: opacity .3s;
+    }
+    .stat:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--accent) 32%, var(--line)); box-shadow: 0 22px 44px -26px color-mix(in srgb, var(--accent) 55%, transparent); }
+    .stat:hover::before { opacity: 1; }
     .stat__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
     .stat__ic { width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; font-size: 19px; background: color-mix(in srgb, var(--accent) 14%, transparent); }
     .stat__delta { font-size: 12.5px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
@@ -149,7 +164,8 @@
     /* ---------- Grid cards ---------- */
     .grid-2 { display: grid; grid-template-columns: 1.6fr 1fr; gap: 18px; margin-bottom: 18px; }
     .grid-2b { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-    .panel { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+    .panel { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; transition: border-color .3s, box-shadow .35s; }
+    .panel:hover { border-color: color-mix(in srgb, var(--accent) 22%, var(--line)); box-shadow: 0 20px 44px -30px color-mix(in srgb, var(--accent) 40%, transparent); }
     .panel__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
     .panel__title { font-size: 15.5px; font-weight: 700; }
     .panel__sub { font-size: 12.5px; color: var(--faint); }
