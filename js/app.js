@@ -3,8 +3,8 @@
    ================================================================ */
 'use strict';
 
-const STORE_KEY = 'techcorp_dashboard_v2';
-const THEME_KEY = 'techcorp_theme';
+let STORE_KEY;                           // per-user, assigned after auth
+const THEME_KEY = 'techcorp_theme';      // theme is shared (not per-user)
 
 const DEFAULT_DATA = {
     projects: [
@@ -46,14 +46,21 @@ const DEFAULT_DATA = {
     },
 };
 
-let state = load();
+// Новый аккаунт стартует с чистого листа — без демо-компании.
+const FRESH_DATA = {
+    projects: [],
+    employees: [],
+    finance: { months: DEFAULT_DATA.finance.months.slice(), income: [0, 0, 0, 0, 0, 0], expenses: [0, 0, 0, 0, 0, 0] },
+};
+
+let state = null;
 
 function load() {
     try {
         const raw = localStorage.getItem(STORE_KEY);
         if (raw) return JSON.parse(raw);
     } catch (e) {}
-    return structuredClone(DEFAULT_DATA);
+    return structuredClone(FRESH_DATA);
 }
 function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} }
 
@@ -424,9 +431,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = (() => { try { return localStorage.getItem(THEME_KEY); } catch (e) { return null; } })();
     document.documentElement.setAttribute('data-theme', savedTheme || 'dark');
 
-    buildNav();
-    refreshAll();
-    buildDashboardCharts();
+    Auth.init({ app: 'techcorp', title: 'TechCorp', subtitle: 'Панель управления', accent: '#6d5efc', icon: '📊', slot: '#authSlot' }).then(() => {
+        STORE_KEY = Auth.ns('techcorp_dashboard_v2');
+        state = load();
+        buildNav();
+        refreshAll();
+        buildDashboardCharts();
+    });
 
     // theme
     $('#themeToggle').addEventListener('click', () => applyTheme(currentTheme() === 'dark' ? 'light' : 'dark'));
